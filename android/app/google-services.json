@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "813670334042",
+    "project_id": "menuplanner-4980c",
+    "storage_bucket": "menuplanner-4980c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:813670334042:android:5b9191617a0eb9b1bfe263",
+        "android_client_info": {
+          "package_name": "com.menuplanner.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGl5VrY17Nwl_gLH-cnEFsPaJP9b1u4bg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

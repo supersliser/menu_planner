@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-// ...
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-
-void main() {
+  await Supabase.initialize(
+    url: 'https://umasclfqatvjniqpntub.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVtYXNjbGZxYXR2am5pcXBudHViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTgzOTIwNDUsImV4cCI6MjAzMzk2ODA0NX0.AYGHA0XrV6282tQo_p3M5YJkSUQZmbexJ1ZwURLw2pE',
+  );
   runApp(const MyApp());
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -81,13 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return FutureBuilder(
-      future: () async {
-        await Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform
-        );
-      }(),
-      builder: (context, snapshot) => Scaffold(
+    return Scaffold(
       appBar: AppBar(
         // TRY THIS: Try changing the color here to a specific color (to
         // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
@@ -131,6 +126,6 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
-    ));
+    );
   }
 }

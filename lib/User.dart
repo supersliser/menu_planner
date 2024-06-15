@@ -2,11 +2,12 @@ import 'package:menu_planner/Attribute.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AttributeWant {
-  const AttributeWant({required this.attribute, required this.amount, required this.tooMuchIsBad});
+  const AttributeWant({required this.attribute, required this.amount, required this.tooMuchIsBad, this.amountInWeek = 0});
 
   final Attribute attribute;
   final int amount;
   final bool tooMuchIsBad;
+  final int amountInWeek;
 
   static Future<List<AttributeWant>> getForUser(String userID) async {
     List<AttributeWant> output = List.empty(growable: true);
@@ -14,7 +15,7 @@ class AttributeWant {
     var temp = await Supabase.instance.client.from("UserAttributeWants").select().eq("UserID", userID);
     
     for (var i in temp) {
-      output.add(AttributeWant(attribute: await Attribute.getByID(i["AttributeID"]), amount: i["Amount"], tooMuchIsBad: i["TooMuchIsBad"]));
+      output.add(AttributeWant(attribute: await Attribute.getByID(i["AttributeID"]), amount: i["AmountPerWeek"], tooMuchIsBad: i["DontHaveTooMuch"]));
     }
     
     return output;

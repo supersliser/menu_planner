@@ -2,14 +2,15 @@ import 'package:flutter/widgets.dart';
 import 'package:menu_planner/Attribute.dart';
 import 'package:menu_planner/Ingredient.dart';
 import 'package:menu_planner/UI/MealDetails.dart';
+import 'package:menu_planner/User.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
 
 class tempMealRating {
-  const tempMealRating({required this.meal, required this.rating});
+  tempMealRating({required this.meal, required this.rating});
 
-  final Meal meal;
-  final double rating;
+  Meal meal;
+  double rating;
 }
 
 class Meal {
@@ -22,10 +23,10 @@ class Meal {
 
   static Future<Meal> toObject(Map<String, dynamic> input) async {
     return Meal(
-        ID: input["ID"],
-        Name: input["Name"],
-        Ingredients: await Ingredient.getForMeal(input["ID"]),
-        );
+      ID: input["ID"],
+      Name: input["Name"],
+      Ingredients: await Ingredient.getForMeal(input["ID"]),
+    );
   }
 
   static Future<List<Meal>> getAll() async {
@@ -52,20 +53,41 @@ class Meal {
   static Future<Meal> calculateBestMeal(DateTime date) async {
     var tempmeals = await getAll();
 
-    List<Attribute> attributes = await Attribute.getAll();
+    List<AttributeWant> attributeWants = await AttributeWant.getForUser(
+        Supabase.instance.client.auth.currentUser!.id);
 
-    List<tempMealRating> meals = List.generate(tempmeals.length, (i) => tempMealRating(meal: tempmeals[i], rating: 5.0));
+    List<tempMealRating> meals = List.generate(tempmeals.length,
+        (i) => tempMealRating(meal: tempmeals[i], rating: 5.0));
 
-
-    for (var i in attributes) {
-
-
+    for (var meal in meals) {
+      for (var attribute in attributeWants) {
+        for (var ingredient in meal.meal.Ingredients) {
+          if (ingredient.Attributes.contains(attribute.attribute)) {
+            if (attribute.tooMuchIsBad) {
+              if (attribute.amount < attribute.amountInWeek) {
+                meal.rating += attribute.amount / 7;
+              } else {
+                meal.rating -= attribute.amount / 7;
+              }
+            } else {
+              if (attribute.amount < attribute.amountInWeek) {
+                meal.rating -= attribute.amount / 7;
+              } else {
+                meal.rating += attribute.amount / 7;
+              }
+            }
+          }
+        }
+      }
+    }
+    meals.sort((a, b) => b.rating.compareTo(a.rating));
     return meals.first.meal;
   }
 
   Widget MealIcon(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => MealDetails(meal: this))),
+      onTap: () => Navigator.push(context,
+          MaterialPageRoute(builder: (context) => MealDetails(meal: this))),
       child: Card.filled(
           color: Colors.blue,
           child: Column(

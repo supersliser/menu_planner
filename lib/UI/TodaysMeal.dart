@@ -3,11 +3,10 @@ import 'package:menu_planner/Meal.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class TodaysMeal extends StatefulWidget {
-  TodaysMeal({super.key});
+  TodaysMeal({super.key, required this.meal});
 
   DateTime date = DateTime.now();
   Meal meal;
-  int mealVariant;
 
   @override
   State<TodaysMeal> createState() => _TodaysMealState();
@@ -20,9 +19,9 @@ class _TodaysMealState extends State<TodaysMeal> {
     return Scaffold(
       body: Card.filled(
         color: Theme.of(context).colorScheme.tertiaryContainer,
-        child: dateCardItem(context, date, meal),
+        child: dateCardItem(context, widget.date, widget.meal),
       ),
-    )
+    );
   }
 
   Widget dateCardItem(BuildContext context, DateTime date, Meal meal) {

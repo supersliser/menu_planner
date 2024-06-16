@@ -1,6 +1,4 @@
-import 'package:flutter/widgets.dart';
 import 'package:menu_planner/Meal.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
 
 class MealDetails extends StatelessWidget {
@@ -18,9 +16,9 @@ class MealDetails extends StatelessWidget {
         Card.filled(color: Colors.white,
         child: Column(
           children: [
-            Text("To make this, you will need:"),
+            const Text("To make this, you will need:"),
             for (var i in meal.Ingredients)
-              Text("- " + i.Name)
+              Text("- ${i.Name}")
           ],
         )),),
       ],),),

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:menu_planner/Meal.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:menu_planner/User.dart';
 
 class TodaysMeal extends StatefulWidget {
-  TodaysMeal({super.key, required this.meal});
+  TodaysMeal({super.key, required this.user});
 
   DateTime date = DateTime.now();
-  Meal meal;
+  User user;
 
   @override
   State<TodaysMeal> createState() => _TodaysMealState();
@@ -19,7 +19,15 @@ class _TodaysMealState extends State<TodaysMeal> {
     return Scaffold(
       body: Card.filled(
         color: Theme.of(context).colorScheme.tertiaryContainer,
-        child: dateCardItem(context, widget.date, widget.meal),
+        child: FutureBuilder(
+          future: widget.user.getMealForDate(widget.date),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Text("Loading...");
+            }
+            return dateCardItem(context, widget.date, snapshot.data!);
+          }
+        ),
       ),
     );
   }
@@ -31,7 +39,7 @@ class _TodaysMealState extends State<TodaysMeal> {
           color: Colors.white,
           child: Column(children: [
             Text(date.day.toString()),
-            Text(date.month.toString() + ", " + date.year.toString()),
+            Text("${date.month}, ${date.year}"),
           ],)
         )
         ,),

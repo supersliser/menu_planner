@@ -1,5 +1,3 @@
-import 'package:flutter/widgets.dart';
-import 'package:menu_planner/Attribute.dart';
 import 'package:menu_planner/Ingredient.dart';
 import 'package:menu_planner/UI/MealDetails.dart';
 import 'package:menu_planner/User.dart';
@@ -59,6 +57,22 @@ class Meal {
     List<tempMealRating> meals = List.generate(tempmeals.length,
         (i) => tempMealRating(meal: tempmeals[i], rating: 5.0));
 
+    var previousMealsTemp = await Supabase.instance.client.from("MealDate").select().eq("Date", date.toString()).eq("User", Supabase.instance.client.auth.currentUser!.id).limit(7);
+
+    for (var i in previousMealsTemp) {
+      var temp = await getByID(i["MealID"]);
+
+      for (var ingredient in temp.Ingredients) {
+        for (var attribute in ingredient.Attributes) {
+          for (var attributeWant in attributeWants) {
+            if (attribute == attributeWant.attribute) {
+              attributeWant.amountInWeek += 1;
+            }
+          }
+        }
+      }
+    }
+
     for (var meal in meals) {
       for (var attribute in attributeWants) {
         for (var ingredient in meal.meal.Ingredients) {
@@ -93,7 +107,7 @@ class Meal {
           child: Column(
             children: [
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text(this.Name),
+                Text(Name),
               ]),
             ],
           )),

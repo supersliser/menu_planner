@@ -1,13 +1,14 @@
 import 'package:menu_planner/Attribute.dart';
+import 'package:menu_planner/Meal.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AttributeWant {
-  const AttributeWant({required this.attribute, required this.amount, required this.tooMuchIsBad, this.amountInWeek = 0});
+  AttributeWant({required this.attribute, required this.amount, required this.tooMuchIsBad, this.amountInWeek = 0});
 
   final Attribute attribute;
   final int amount;
   final bool tooMuchIsBad;
-  final int amountInWeek;
+  int amountInWeek;
 
   static Future<List<AttributeWant>> getForUser(String userID) async {
     List<AttributeWant> output = List.empty(growable: true);
@@ -30,6 +31,24 @@ class User {
   final List<AttributeWant> Attributes;
 
   static Future<User> toObject(Map<String, dynamic> input) async {
-    return User(ID: input["ID"], Name: input["Name"], Attributes: await AttributeWant.getForUser(input["ID"]));
+    return User(ID: input["UUID"], Name: input["Username"], Attributes: await AttributeWant.getForUser(input["UUID"]));
+  }
+
+  static Future<User> getByID(String id) async {
+    return toObject((await Supabase.instance.client.from("Users").select().eq("UUID", id)).first);
+  }
+
+  static Future<User> getByName(String name) async {
+    return toObject((await Supabase.instance.client.from("Users").select().eq("Username", name)).first);
+  }
+
+  Future<Meal> getMealForDate(DateTime date) async {
+    var temp = await Supabase.instance.client.from("MealDate").select().eq("Date", date.toString()).eq("User", ID).limit(1);
+
+    if (temp.isEmpty) {
+      return await Meal.calculateBestMeal(date);
+    } else {
+      return await Meal.getByID(temp.first["MealID"]);
+    }
   }
 }

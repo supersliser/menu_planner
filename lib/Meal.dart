@@ -28,7 +28,7 @@ class Meal {
   }
 
   static Future<List<Meal>> getAll() async {
-    var temp = await Supabase.instance.client.from("Meals").select();
+    var temp = await Supabase.instance.client.from("Meal").select();
     List<Meal> output = List.empty(growable: true);
     for (var i in temp) {
       output.add(await toObject(i));
@@ -38,13 +38,13 @@ class Meal {
 
   static Future<Meal> getByID(int id) async {
     return await toObject(
-        (await Supabase.instance.client.from("Meals").select().eq("ID", id))
+        (await Supabase.instance.client.from("Meal").select().eq("ID", id))
             .first);
   }
 
   static Future<Meal> getByName(String name) async {
     return await toObject(
-        (await Supabase.instance.client.from("Meals").select().eq("Name", name))
+        (await Supabase.instance.client.from("Meal").select().eq("Name", name))
             .first);
   }
 

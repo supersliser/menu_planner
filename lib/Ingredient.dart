@@ -9,7 +9,8 @@ class Ingredient {
   final List<Attribute> Attributes;
 
   static Future<Ingredient> toObject(Map<String, dynamic> input) async {
-    return Ingredient(ID: input["ID"], Name: input["Name"], Attributes: await Attribute.getForIngredient(input["ID"]));
+    var temp = await Attribute.getForIngredient(input["ID"]);
+    return Ingredient(ID: input["ID"], Name: input["Name"], Attributes: temp);
   }
 
   static Future<List<Ingredient>> getAll() async {

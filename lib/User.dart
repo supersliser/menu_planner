@@ -21,24 +21,43 @@ class AttributeWant {
     
     return output;
   }
+
+  static Future<List<AttributeWant>> getDefault() async {
+    List<AttributeWant> output = List.empty(growable: true);
+
+    output.add(AttributeWant(attribute: await Attribute.getByName("IsVegetable"), amount: 5, tooMuchIsBad: false));
+    output.add(AttributeWant(attribute: await Attribute.getByName("IsStarch"), amount: 4, tooMuchIsBad: false));
+    output.add(AttributeWant(attribute: await Attribute.getByName("IsDairy"), amount: 2, tooMuchIsBad: true));
+    output.add(AttributeWant(attribute: await Attribute.getByName("IsGrain"), amount: 2, tooMuchIsBad: false));
+    output.add(AttributeWant(attribute: await Attribute.getByName("IsRedMeat"), amount: 2, tooMuchIsBad: true));
+    output.add(AttributeWant(attribute: await Attribute.getByName("IsFish"), amount: 2, tooMuchIsBad: true));
+    output.add(AttributeWant(attribute: await Attribute.getByName("IsWhiteMeat"), amount: 2, tooMuchIsBad: true));
+    return output;
+  }
 }
 
-class User {
-  const User({required this.ID, required this.Name, required this.Attributes});
+class UserData {
+  UserData({this.ID = "-1", required this.Name, required this.Attributes});
 
-  final String ID;
+  String ID;
   final String Name;
   final List<AttributeWant> Attributes;
 
-  static Future<User> toObject(Map<String, dynamic> input) async {
-    return User(ID: input["UUID"], Name: input["Username"], Attributes: await AttributeWant.getForUser(input["UUID"]));
+  static Future<UserData> toObject(Map<String, dynamic> input) async {
+    return UserData(ID: input["UUID"], Name: input["Username"], Attributes: await AttributeWant.getForUser(input["UUID"]));
   }
 
-  static Future<User> getByID(String id) async {
+  static Future<UserData> getByID(String id) async {
     return toObject((await Supabase.instance.client.from("Users").select().eq("UUID", id)).first);
   }
 
-  static Future<User> getByName(String name) async {
+  Future<void> pushToDatabase(String email, String password) async {
+    await Supabase.instance.client.auth.signUp(email: email, password: password);
+    await Supabase.instance.client.auth.signInWithPassword(email: email, password: password);
+    ID = Supabase.instance.client.auth.currentUser!.id;
+    await Supabase.instance.client.from("Users").insert({"UUID": ID, "Username": Name});
+  }
+  static Future<UserData> getByName(String name) async {
     return toObject((await Supabase.instance.client.from("Users").select().eq("Username", name)).first);
   }
 

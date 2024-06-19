@@ -17,7 +17,6 @@ class Meal {
 
   int ID;
   String Name;
-
   final List<Ingredient> Ingredients;
 
   static Future<Meal> toObject(Map<String, dynamic> input) async {

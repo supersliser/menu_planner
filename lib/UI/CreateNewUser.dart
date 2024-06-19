@@ -81,7 +81,8 @@ class _CreateNewUserState extends State<CreateNewUser> {
     var temp = UserData(
         Name: nameController.text,
         Attributes: await AttributeWant.getDefault());
-    temp.pushToDatabase(emailController.text, passwordController.text);
+    await temp.pushToDatabase(emailController.text, passwordController.text);
+    
     Navigator.pop(context);
   }
 }

@@ -56,6 +56,16 @@ class UserData {
     await Supabase.instance.client.auth.signInWithPassword(email: email, password: password);
     ID = Supabase.instance.client.auth.currentUser!.id;
     await Supabase.instance.client.from("Users").insert({"UUID": ID, "Username": Name});
+
+    for (var i in Attributes) {
+      await Supabase.instance.client.from("UserAttributeWants").insert({
+        "UserID": ID,
+        "AttributeID": i.attribute.ID,
+        "AmountPerWeek": i.amount,
+        "DontHaveTooMuch": i.tooMuchIsBad
+      });
+    }
+
   }
   static Future<UserData> getByName(String name) async {
     return toObject((await Supabase.instance.client.from("Users").select().eq("Username", name)).first);

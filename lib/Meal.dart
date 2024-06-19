@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:menu_planner/Ingredient.dart';
 import 'package:menu_planner/UI/MealDetails.dart';
 import 'package:menu_planner/User.dart';
@@ -12,10 +14,10 @@ class tempMealRating {
 }
 
 class Meal {
-  const Meal({required this.ID, required this.Name, required this.Ingredients});
+  Meal({required this.ID, required this.Name, required this.Ingredients});
 
-  final int ID;
-  final String Name;
+  int ID;
+  String Name;
 
   final List<Ingredient> Ingredients;
 
@@ -48,6 +50,26 @@ class Meal {
             .first);
   }
 
+  Future<void> pushToDatabase(List<bool> ingredientsOptional) async {
+    var temp = await Supabase.instance.client.from("Meal").insert({
+      "Name": Name,
+    }).select();
+    ID = temp[0]["ID"];
+
+    for (int i = 0; i < Ingredients.length; i++) {
+      await Supabase.instance.client.from("MealIngredient").insert({
+        "MealID": ID,
+        "IngredientID": Ingredients[i].ID,
+        "IsOptional": ingredientsOptional[i]
+      });
+    }
+
+    await Supabase.instance.client.from("UserMeal").insert({
+      "UserID": Supabase.instance.client.auth.currentUser!.id,
+      "MealID": ID
+    });
+  }
+
   static Future<Meal> calculateBestMeal(DateTime date) async {
     var tempmeals = await getAll();
 
@@ -57,7 +79,13 @@ class Meal {
     List<tempMealRating> meals = List.generate(tempmeals.length,
         (i) => tempMealRating(meal: tempmeals[i], rating: 5.0));
 
-    var previousMealsTemp = await Supabase.instance.client.from("MealDate").select().eq("Date", date.toString()).eq("User", Supabase.instance.client.auth.currentUser!.id).limit(7);
+    var previousMealsTemp = await Supabase.instance.client
+        .from("MealDate")
+        .select()
+        .lt("Date", date.toString())
+        .eq("User", Supabase.instance.client.auth.currentUser!.id)
+        .order("Date", ascending: false)
+        .limit(7);
 
     for (var i in previousMealsTemp) {
       var temp = await getByID(i["MealID"]);
@@ -95,6 +123,12 @@ class Meal {
       }
     }
     meals.sort((a, b) => b.rating.compareTo(a.rating));
+
+    await Supabase.instance.client.from("MealDate").insert({
+      "Date": date.toString(),
+      "User": Supabase.instance.client.auth.currentUser!.id,
+      "MealID": meals.first.meal.ID
+    });
     return meals.first.meal;
   }
 

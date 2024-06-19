@@ -1,12 +1,15 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 class Attribute {
-  const Attribute({required this.ID, required this.Name});
+  const Attribute({required this.ID, required this.Name, required this.PluralDisplayText, required this.SingularDisplayText, required this.CanBeWanted});
 
   final int ID;
   final String Name;
+  final String PluralDisplayText;
+  final String SingularDisplayText;
+  final bool CanBeWanted;
 
   static Attribute toObject(Map<String, dynamic> input) {
-    return Attribute(ID: input["ID"], Name: input["Name"]);
+    return Attribute(ID: input["ID"], Name: input["Name"], PluralDisplayText: input["PluralDisplayText"], SingularDisplayText: input["SingularDisplayText"], CanBeWanted: input["CanBeWanted"]);
   }
 
   static Future<List<Attribute>> getAll() async {

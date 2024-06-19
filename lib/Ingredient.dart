@@ -21,7 +21,7 @@ class Ingredient {
   Future<void> pushToDatabase() async {
     var temp = await Supabase.instance.client.from("Ingredient").insert({
       "Name": Name,
-      "CookingMethod": CookingMethod
+      "CookingMethod": CookingMethod == "" ? "null" : CookingMethod
     }).select();
 
     ID = temp[0]["ID"];

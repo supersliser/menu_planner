@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:menu_planner/Meal.dart';
+import 'package:menu_planner/UI/CreateNewUser.dart';
 import 'package:menu_planner/UI/Navbar.dart';
 import 'package:menu_planner/User.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -35,7 +36,8 @@ class _TodaysMealState extends State<TodaysMeal> {
   }
 
   Future<Meal> setup() async {
-    widget.user = await UserData.getByID(Supabase.instance.client.auth.currentUser!.id);
+    widget.user =
+        await UserData.getByID(Supabase.instance.client.auth.currentUser!.id);
     return await widget.user.getMealForDate(widget.date);
   }
 

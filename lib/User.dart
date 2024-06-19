@@ -25,13 +25,13 @@ class AttributeWant {
   static Future<List<AttributeWant>> getDefault() async {
     List<AttributeWant> output = List.empty(growable: true);
 
-    output.add(AttributeWant(attribute: await Attribute.getByName("IsVegetable"), amount: 5, tooMuchIsBad: false));
-    output.add(AttributeWant(attribute: await Attribute.getByName("IsStarch"), amount: 4, tooMuchIsBad: false));
-    output.add(AttributeWant(attribute: await Attribute.getByName("IsDairy"), amount: 2, tooMuchIsBad: true));
-    output.add(AttributeWant(attribute: await Attribute.getByName("IsGrain"), amount: 2, tooMuchIsBad: false));
-    output.add(AttributeWant(attribute: await Attribute.getByName("IsRedMeat"), amount: 2, tooMuchIsBad: true));
-    output.add(AttributeWant(attribute: await Attribute.getByName("IsFish"), amount: 2, tooMuchIsBad: true));
-    output.add(AttributeWant(attribute: await Attribute.getByName("IsWhiteMeat"), amount: 2, tooMuchIsBad: true));
+    output.add(AttributeWant(attribute: await Attribute.getByName("Vegetable"), amount: 5, tooMuchIsBad: false));
+    output.add(AttributeWant(attribute: await Attribute.getByName("Starch"), amount: 7, tooMuchIsBad: false));
+    output.add(AttributeWant(attribute: await Attribute.getByName("Dairy"), amount: 2, tooMuchIsBad: true));
+    output.add(AttributeWant(attribute: await Attribute.getByName("Grain"), amount: 2, tooMuchIsBad: false));
+    output.add(AttributeWant(attribute: await Attribute.getByName("RedMeat"), amount: 2, tooMuchIsBad: true));
+    output.add(AttributeWant(attribute: await Attribute.getByName("Fish"), amount: 2, tooMuchIsBad: true));
+    output.add(AttributeWant(attribute: await Attribute.getByName("WhiteMeat"), amount: 2, tooMuchIsBad: true));
     return output;
   }
 }

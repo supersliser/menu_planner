@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:menu_planner/UI/TodaysMeal.dart';
 import 'package:menu_planner/User.dart';
 
 class CreateNewUser extends StatefulWidget {
@@ -82,7 +83,6 @@ class _CreateNewUserState extends State<CreateNewUser> {
         Name: nameController.text,
         Attributes: await AttributeWant.getDefault());
     await temp.pushToDatabase(emailController.text, passwordController.text);
-    
-    Navigator.pop(context);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => TodaysMeal()));
   }
 }

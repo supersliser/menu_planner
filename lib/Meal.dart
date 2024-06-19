@@ -1,4 +1,3 @@
-
 import 'package:menu_planner/Ingredient.dart';
 import 'package:menu_planner/UI/MealDetails.dart';
 import 'package:menu_planner/User.dart';
@@ -99,21 +98,32 @@ class Meal {
       }
     }
 
+    int subtractor = 7;
+
     for (var meal in meals) {
-      for (var attribute in attributeWants) {
-        for (var ingredient in meal.meal.Ingredients) {
-          if (ingredient.Attributes.contains(attribute.attribute)) {
-            if (attribute.tooMuchIsBad) {
-              if (attribute.amount < attribute.amountInWeek) {
-                meal.rating += attribute.amount / 7;
-              } else {
-                meal.rating -= attribute.amount / 7;
-              }
+      for (var prevMeal in previousMealsTemp) {
+        if (meal.meal.ID == prevMeal["MealID"]) {
+          meal.rating -= subtractor;
+          subtractor--;
+          break;
+        }
+      }
+      for (var ingredient in meal.meal.Ingredients) {
+        for (var ingredientAttribute in ingredient.Attributes) {
+          if (ingredientAttribute.ID == 10) {
+            if (date.weekday == DateTime.sunday) {
+              meal.rating += 10;
             } else {
-              if (attribute.amount < attribute.amountInWeek) {
-                meal.rating -= attribute.amount / 7;
+              meal.rating -= 10;
+            }
+          }
+          for (var attribute in attributeWants) {
+            if (ingredientAttribute.ID == attribute.attribute.ID) {
+              if (attribute.amountInWeek < attribute.amount) {
+                meal.rating += 5;
               } else {
-                meal.rating += attribute.amount / 7;
+                meal.rating -=
+                    attribute.tooMuchIsBad ? 5 : 0;
               }
             }
           }
@@ -121,6 +131,10 @@ class Meal {
       }
     }
     meals.sort((a, b) => b.rating.compareTo(a.rating));
+
+    for (var i in meals) {
+      print(i.meal.Name + ": " + i.rating.toString());
+    }
 
     await Supabase.instance.client.from("MealDate").insert({
       "Date": date.toString(),

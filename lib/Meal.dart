@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:menu_planner/Ingredient.dart';
 import 'package:menu_planner/UI/MealDetails.dart';

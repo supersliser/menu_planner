@@ -10,7 +10,7 @@ class Navbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NavigationBar(
-      destinations: [
+      destinations: const [
         NavigationDestination(
             icon: Icon(Icons.fastfood), label: "Today's meal"),
         NavigationDestination(
@@ -25,7 +25,7 @@ class Navbar extends StatelessWidget {
             break;
           case 1:
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => CreateNewMeal()));
+                context, MaterialPageRoute(builder: (context) => const CreateNewMeal()));
             break;
         }
       },

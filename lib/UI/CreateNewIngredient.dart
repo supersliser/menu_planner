@@ -22,12 +22,12 @@ class _CreateNewIngredientState extends State<CreateNewIngredient> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("New Ingredient")),
-      bottomNavigationBar: Navbar(currentPageIndex: 1),
+      bottomNavigationBar: const Navbar(currentPageIndex: 1),
       body: FutureBuilder(
         future: Attribute.getAll(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Center(child: const Text("Loading..."));
+            return const Center(child: Text("Loading..."));
           }
           if (!listsSet) {
             attributeSelected = List.filled(snapshot.data!.length, false);
@@ -59,8 +59,8 @@ class _CreateNewIngredientState extends State<CreateNewIngredient> {
                         color: Theme.of(context).colorScheme.tertiaryContainer,
                         child: Column(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
                               child: Text("Attributes (select as many as are true): "),
                             ),
                             for (int i = 0; i < snapshot.data!.length; i++)

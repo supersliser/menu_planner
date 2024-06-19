@@ -3,7 +3,6 @@ import 'package:menu_planner/Ingredient.dart';
 import 'package:menu_planner/Meal.dart';
 import 'package:menu_planner/UI/CreateNewIngredient.dart';
 import 'package:menu_planner/UI/Navbar.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CreateNewMeal extends StatefulWidget {
   const CreateNewMeal({super.key});
@@ -24,14 +23,14 @@ class _CreateNewMealState extends State<CreateNewMeal> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("New meal")),
-      bottomNavigationBar: Navbar(
+      bottomNavigationBar: const Navbar(
         currentPageIndex: 1,
       ),
       body: FutureBuilder(
           future: Ingredient.getAll(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return Center(child: const Text("Loading..."));
+              return const Center(child: Text("Loading..."));
             }
             List<int> displayIngredients = List.empty(growable: true);
             for (int i = 0; i < snapshot.data!.length; i++) {
@@ -69,14 +68,14 @@ class _CreateNewMealState extends State<CreateNewMeal> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
-                                  Text("Ingredients"),
+                                  const Text("Ingredients"),
                                   ElevatedButton(
                                       onPressed: () async {
                                         final temp = await Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    CreateNewIngredient()));
+                                                    const CreateNewIngredient()));
                                         if (!context.mounted) return;
                                         setState(() {
                                           ingredientOptional.add(false);
@@ -84,12 +83,12 @@ class _CreateNewMealState extends State<CreateNewMeal> {
                                           snapshot.data!.add(temp);
                                         });
                                       },
-                                      child: Text("Add New Ingredient"))
+                                      child: const Text("Add New Ingredient"))
                                 ],
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(8),
                               child: TextField(
                                 autocorrect: true,
                                 controller: searchController,
@@ -123,18 +122,17 @@ class _CreateNewMealState extends State<CreateNewMeal> {
                                               (snapshot.data![i]
                                                           .CookingMethod !=
                                                       "null"
-                                                  ? ", " +
-                                                      snapshot.data![i]
-                                                          .CookingMethod
+                                                  ? ", ${snapshot.data![i]
+                                                          .CookingMethod}"
                                                   : ""))
                                         ],
                                       ),
-                                      Padding(padding: EdgeInsets.all(8.0)),
+                                      const Padding(padding: EdgeInsets.all(8.0)),
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.end,
                                         children: [
-                                          Text("("),
+                                          const Text("("),
                                           Checkbox(
                                               value: ingredientOptional[i],
                                               onChanged: (val) {
@@ -142,8 +140,8 @@ class _CreateNewMealState extends State<CreateNewMeal> {
                                                   ingredientOptional[i] = val!;
                                                 });
                                               }),
-                                          Text("Optional"),
-                                          Text("  )"),
+                                          const Text("Optional"),
+                                          const Text("  )"),
                                         ],
                                       )
                                     ],

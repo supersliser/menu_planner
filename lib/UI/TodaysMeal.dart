@@ -19,14 +19,14 @@ class _TodaysMealState extends State<TodaysMeal> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Today's meal")),
-      bottomNavigationBar: Navbar(currentPageIndex: 0),
+      bottomNavigationBar: const Navbar(currentPageIndex: 0),
       body: Card.filled(
         color: Theme.of(context).colorScheme.tertiaryContainer,
         child: FutureBuilder(
             future: setup(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return Center(child: const Text("Loading..."));
+                return const Center(child: Text("Loading..."));
               }
               return dateCardItem(context, widget.date, snapshot.data!);
             }),

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:menu_planner/User.dart';
 
 class CreateNewUser extends StatefulWidget {
-  CreateNewUser({super.key});
+  const CreateNewUser({super.key});
 
   @override
   State<CreateNewUser> createState() => _CreateNewUserState();
@@ -28,7 +27,7 @@ class _CreateNewUserState extends State<CreateNewUser> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text("Create New User"),
+            const Text("Create New User"),
             TextField(
                 controller: nameController,
                 onSubmitted: (_) => submit(),

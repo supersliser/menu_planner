@@ -83,6 +83,7 @@ class _CreateNewUserState extends State<CreateNewUser> {
         Name: nameController.text,
         Attributes: await AttributeWant.getDefault());
     await temp.pushToDatabase(emailController.text, passwordController.text);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => TodaysMeal()));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => TodaysMeal()));
   }
 }

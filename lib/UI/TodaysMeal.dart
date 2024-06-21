@@ -38,6 +38,13 @@ class _TodaysMealState extends State<TodaysMeal> {
   Future<Meal> setup() async {
     widget.user =
         await UserData.getByID(Supabase.instance.client.auth.currentUser!.id);
+    // for (int i = 1; i < 27; i++) {
+    //   if (i != 11) {
+    //     await Supabase.instance.client.from("UserMeal").insert(
+    //         {"UserID": widget.user.ID, "MealID": i});
+    //   }
+    // }
+
     return await widget.user.getMealForDate(widget.date);
   }
 

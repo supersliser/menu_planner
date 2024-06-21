@@ -26,7 +26,7 @@ class AttributeWant {
     List<AttributeWant> output = List.empty(growable: true);
 
     output.add(AttributeWant(attribute: await Attribute.getByName("Vegetable"), amount: 5, tooMuchIsBad: false));
-    output.add(AttributeWant(attribute: await Attribute.getByName("Starch"), amount: 7, tooMuchIsBad: false));
+    output.add(AttributeWant(attribute: await Attribute.getByName("Starch"), amount: 4, tooMuchIsBad: false));
     output.add(AttributeWant(attribute: await Attribute.getByName("Dairy"), amount: 2, tooMuchIsBad: true));
     output.add(AttributeWant(attribute: await Attribute.getByName("Grain"), amount: 2, tooMuchIsBad: false));
     output.add(AttributeWant(attribute: await Attribute.getByName("RedMeat"), amount: 2, tooMuchIsBad: true));

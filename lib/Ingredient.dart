@@ -11,6 +11,8 @@ class Ingredient {
 
   static Future<Ingredient> toObject(Map<String, dynamic> input) async {
     var temp = await Attribute.getForIngredient(input["ID"]);
+          print("setting up ingredient ${input["Name"]}");
+
       return Ingredient(
           ID: input["ID"],
           Name: input["Name"],
@@ -38,6 +40,7 @@ class Ingredient {
     var temp = await Supabase.instance.client.from("Ingredient").select();
     List<Ingredient> output = List.empty(growable: true);
     for (var i in temp) {
+      print("setting up ingredient ${i["Name"]}");
       output.add(await toObject(i));
     }
     return output;
@@ -62,6 +65,7 @@ class Ingredient {
   static Future<List<Ingredient>> getForMeal(int id) async {
     List<Ingredient> output = List.empty(growable: true);
 
+    print("getting ingredients for meal ${id}");
     var temp = await Supabase.instance.client
         .from("MealIngredient")
         .select()

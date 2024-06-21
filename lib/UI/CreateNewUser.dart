@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:menu_planner/UI/TodaysMeal.dart';
 import 'package:menu_planner/User.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CreateNewUser extends StatefulWidget {
   const CreateNewUser({super.key});
@@ -28,7 +29,7 @@ class _CreateNewUserState extends State<CreateNewUser> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text("Create New User"),
+            const Text("Create New User or Sign In"),
             TextField(
                 controller: nameController,
                 onSubmitted: (_) => submit(),
@@ -53,10 +54,46 @@ class _CreateNewUserState extends State<CreateNewUser> {
               child: ElevatedButton(
                   onPressed: submit, child: const Text("Create User")),
             ),
+                        Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                  onPressed: login, child: const Text("Sign In")),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                  onPressed: submitAnon, child: const Text("Anonymous Sign In")),
+            ),
           ],
         ),
       )),
     );
+  }
+
+  Future<void> submitAnon() async {
+    await Supabase.instance.client.auth.signInWithPassword(password: "anonpassword", email: "anon@gmail.com");
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => TodaysMeal()));
+  }
+
+  Future<void> login() async {
+    if (emailController.text == "") {
+      setState(() {
+        emailError = true;
+      });
+      return;
+    }
+    if (passwordController.text == "") {
+      setState(() {
+        passwordError = true;
+      });
+      return;
+    }
+
+
+    await Supabase.instance.client.auth.signInWithPassword(password: passwordController.text, email: emailController.text);
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => TodaysMeal()));
   }
 
   Future<void> submit() async {

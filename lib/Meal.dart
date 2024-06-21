@@ -238,18 +238,20 @@ class Meal {
   }
 
   Widget MealIcon(BuildContext context) {
-    return GestureDetector(
-      onTap: () => Navigator.push(context,
-          MaterialPageRoute(builder: (context) => MealDetails(meal: this))),
-      child: Card.filled(
-          color: Colors.blue,
-          child: Column(
-            children: [
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text(Name),
-              ]),
-            ],
-          )),
+    return SizedBox(
+      width: 200,
+      child: GestureDetector(
+        onTap: () => Navigator.push(context,
+            MaterialPageRoute(builder: (context) => MealDetails(meal: this))),
+        child: Card.filled(
+            color: Colors.blue,
+            child: Column(
+              children: [
+                  Text(Name),
+                  Icon(Icons.fastfood, size: 100),
+              ],
+            )),
+      ),
     );
   }
 }

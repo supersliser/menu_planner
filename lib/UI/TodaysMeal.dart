@@ -27,7 +27,10 @@ class _TodaysMealState extends State<TodaysMeal> {
             future: setup(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return const Center(child: Text("Loading..."));
+                return const Center(
+                    child: Column(
+                  children: [Text("Loading..."), CircularProgressIndicator()],
+                ));
               }
               return dateCardItem(context, widget.date, snapshot.data!);
             }),
@@ -38,12 +41,6 @@ class _TodaysMealState extends State<TodaysMeal> {
   Future<Meal> setup() async {
     widget.user =
         await UserData.getByID(Supabase.instance.client.auth.currentUser!.id);
-    // for (int i = 1; i < 27; i++) {
-    //   if (i != 11) {
-    //     await Supabase.instance.client.from("UserMeal").insert(
-    //         {"UserID": widget.user.ID, "MealID": i});
-    //   }
-    // }
 
     return await widget.user.getMealForDate(widget.date);
   }
@@ -51,17 +48,19 @@ class _TodaysMealState extends State<TodaysMeal> {
   Widget dateCardItem(BuildContext context, DateTime date, Meal meal) {
     return Column(
       children: [
-        SizedBox(
-          width: 150,
-          height: 200,
-          child: Card.filled(
-              color: Colors.white,
-              child: Column(
-                children: [
-                  Text(date.day.toString()),
-                  Text("${date.month}, ${date.year}"),
-                ],
-              )),
+        Center(
+          child: SizedBox(
+            width: 150,
+            child: Card.filled(
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    Text(date.weekday == DateTime.sunday ? "Sunday" : date.weekday == DateTime.monday ? "Monday" : date.weekday == DateTime.tuesday ? "Tuesday" : date.weekday == DateTime.wednesday ? "Wednesday" : date.weekday == DateTime.thursday ? "Thursday" : date.weekday == DateTime.friday ? "Friday" : "Saturday"),
+                    Text("${date.day}${date.day % 10 == 1 ? 'st' : date.day % 10 == 2 ? 'nd' : date.day % 10 == 3 ? 'rd' : 'th'}"),
+                    Text("${date.month}, ${date.year}"),
+                  ],
+                )),
+          ),
         ),
         meal.MealIcon(context)
       ],

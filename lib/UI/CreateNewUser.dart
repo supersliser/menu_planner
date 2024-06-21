@@ -32,20 +32,17 @@ class _CreateNewUserState extends State<CreateNewUser> {
             const Text("Create New User or Sign In"),
             TextField(
                 controller: nameController,
-                onSubmitted: (_) => submit(),
                 decoration: InputDecoration(
                     labelText: "Username",
                     errorText: usernameError ? "Invalid Username" : null)),
             TextField(
                 controller: emailController,
-                onSubmitted: (_) => submit(),
                 decoration: InputDecoration(
                     labelText: "Email",
                     errorText: emailError ? "Invalid Email" : null)),
             TextField(
                 controller: passwordController,
                 obscureText: true,
-                onSubmitted: (_) => submit(),
                 decoration: InputDecoration(
                     labelText: "Password",
                     errorText: passwordError ? "Invalid Password" : null)),

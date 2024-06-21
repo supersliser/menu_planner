@@ -37,13 +37,33 @@ class Ingredient {
   }
 
   static Future<List<Ingredient>> getAll() async {
-    var temp = await Supabase.instance.client.from("Ingredient").select();
-    List<Ingredient> output = List.empty(growable: true);
-    for (var i in temp) {
-      print("setting up ingredient ${i["Name"]}");
-      output.add(await toObject(i));
+    var ingredients = await Supabase.instance.client.from("Ingredient").select();
+    var ingredientAttributes =
+        await Supabase.instance.client.from("AttributeOfIngredient").select();
+    var attributes =
+        await Supabase.instance.client.from("IngredientAttribute").select();
+    List<Ingredient> temp = List.empty(growable: true);
+    for (int i = 0; i < ingredients.length; i++) {
+      print("setting up ingredient ${ingredients[i]["Name"]}");
+      List<Attribute> tempAttributes = List.empty(growable: true);
+      for (int j = 0; j < attributes.length; j++) {
+        if (ingredientAttributes
+            .where((element) =>
+                element["IngredientID"] == ingredients[i]["ID"] &&
+                element["AttributeID"] == attributes[j]["ID"])
+            .isNotEmpty) {
+          tempAttributes.add(Attribute(
+              ID: attributes[j]["ID"],
+              CanBeWanted: attributes[j]["CanBeWanted"],
+              Name: attributes[j]["Name"],
+              PluralDisplayText: attributes[j]["PluralDisplayText"],
+              SingularDisplayText: attributes[j]["SingularDisplayText"]));
+        }
+      }
+      temp.add(Ingredient(ID: ingredients[i]["ID"], Name: ingredients[i]["Name"], CookingMethod: ingredients[i]["CookingMethod"], Attributes: tempAttributes));
+    
     }
-    return output;
+    return temp;
   }
 
   static Future<Ingredient> getByID(int id) async {

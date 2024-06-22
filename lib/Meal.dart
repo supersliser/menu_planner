@@ -199,7 +199,7 @@ class Meal {
       for (var ingredient in meal.meal.Ingredients) {
         ingredient.Attributes.sort((a, b) => a.ID.compareTo(b.ID));
         if (Attribute.intAttributeListContains(ingredient.Attributes, 10)) {
-          if (date.weekday == DateTime.sunday) {
+          if (date.weekday != 7) {
             meal.rating -= 50;
           } else {
             meal.rating += 50;

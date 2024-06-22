@@ -76,7 +76,7 @@ class _CreateNewMealState extends State<CreateNewMeal> {
                                             MaterialPageRoute(
                                                 builder: (context) =>
                                                     const CreateNewIngredient()));
-                                        if (!context.mounted) return;
+                                        if (!context.mounted || temp == null) return;
                                         setState(() {
                                           ingredientOptional.add(false);
                                           ingredientSelected.add(false);
@@ -150,22 +150,23 @@ class _CreateNewMealState extends State<CreateNewMeal> {
                           ]),
                         ),
                       ),
-                      ElevatedButton(
-                          onPressed: () async {
-                            var ingredients = snapshot.data!;
-                            for (int i = 0; i < ingredients.length; i++) {
-                              if (!ingredientSelected[i]) {
-                                ingredients.removeAt(i);
-                              }
-                            }
-                            var temp = Meal(
-                                ID: -1,
-                                Name: nameController.text,
-                                Ingredients: ingredients);
-                            await temp.pushToDatabase(ingredientOptional);
-                            Navigator.pop(context);
-                          },
-                          child: const Text("Create New Meal"))
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                            onPressed: () async {
+                              var ingredients = snapshot.data!;
+                              ingredients.removeWhere(
+                                  (element) => !ingredientSelected[ingredients
+                                      .indexOf(element)]);
+                              var temp = Meal(
+                                  ID: -1,
+                                  Name: nameController.text,
+                                  Ingredients: ingredients);
+                              await temp.pushToDatabase(ingredientOptional);
+                              Navigator.pop(context);
+                            },
+                            child: const Text("Create New Meal")),
+                      )
                     ],
                   ),
                 ),

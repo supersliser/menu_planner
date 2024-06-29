@@ -116,7 +116,7 @@ class Attribute {
     List<Attribute> output = List.empty(growable: true);
 
 
-    print("getting attributes for ${ingredientID}");
+    print("getting attributes for $ingredientID");
     var temp = await Supabase.instance.client
         .from("AttributeOfIngredient")
         .select()

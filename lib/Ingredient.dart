@@ -85,7 +85,7 @@ class Ingredient {
   static Future<List<Ingredient>> getForMeal(int id) async {
     List<Ingredient> output = List.empty(growable: true);
 
-    print("getting ingredients for meal ${id}");
+    print("getting ingredients for meal $id");
     var temp = await Supabase.instance.client
         .from("MealIngredient")
         .select()

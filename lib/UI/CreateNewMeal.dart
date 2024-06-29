@@ -24,7 +24,7 @@ class _CreateNewMealState extends State<CreateNewMeal> {
     return Scaffold(
       appBar: AppBar(title: const Text("New meal")),
       bottomNavigationBar: const Navbar(
-        currentPageIndex: 1,
+        currentPageIndex: 2,
       ),
       body: FutureBuilder(
           future: Ingredient.getAll(),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:menu_planner/UI/CreateNewUser.dart';
-import 'package:menu_planner/UI/TodaysMeal.dart';
+import 'package:menu_planner/UI/Home.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: Supabase.instance.client.auth.currentUser == null ? const CreateNewUser() : TodaysMeal(),
+      home: Supabase.instance.client.auth.currentUser == null ? const CreateNewUser() : const Home(),
     );
   }
 }

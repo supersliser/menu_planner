@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:menu_planner/Meal.dart';
-import 'package:menu_planner/UI/CreateNewUser.dart';
 import 'package:menu_planner/UI/Navbar.dart';
 import 'package:menu_planner/User.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -20,7 +19,7 @@ class _TodaysMealState extends State<TodaysMeal> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Today's meal")),
-      bottomNavigationBar: const Navbar(currentPageIndex: 0),
+      bottomNavigationBar: const Navbar(currentPageIndex: 1),
       body: Card.filled(
         color: Theme.of(context).colorScheme.tertiaryContainer,
         child: FutureBuilder(

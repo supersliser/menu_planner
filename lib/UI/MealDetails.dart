@@ -24,7 +24,7 @@ class MealDetails extends StatelessWidget {
                         const Text("To make this, you will need:"),
                         for (var i in meal.Ingredients) Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text("- ${i.Name}${i.CookingMethod == "null" ? "" : ", " + i.CookingMethod}"),
+                          child: Text("- ${i.Name}${i.CookingMethod == "null" ? "" : ", ${i.CookingMethod}"}"),
                         )
                       ],
                     ),

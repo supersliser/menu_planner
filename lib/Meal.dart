@@ -49,8 +49,13 @@ class Meal {
     List<Meal> output = List.empty(growable: true);
     for (int i = 0; i < meals.length; i++) {
       print("setting up meal ${meals[i]["Meal"]["Name"]}");
-      var tempMealIngredients = mealIngredients.where((element) => element["MealID"] == meals[i]["Meal"]["ID"]).toList();
-      var tempIngredients = ingredients.where((element2) => tempMealIngredients.any((element) => element["IngredientID"] == element2["ID"])).toList();
+      var tempMealIngredients = mealIngredients
+          .where((element) => element["MealID"] == meals[i]["Meal"]["ID"])
+          .toList();
+      var tempIngredients = ingredients
+          .where((element2) => tempMealIngredients
+              .any((element) => element["IngredientID"] == element2["ID"]))
+          .toList();
       List<List<Map<String, dynamic>>> tempIngredientAttributes =
           List.empty(growable: true);
       List<List<Map<String, dynamic>>> tempAttributes =
@@ -61,8 +66,137 @@ class Meal {
             .where((element2) =>
                 element2["IngredientID"] == tempIngredients[j]["ID"])
             .toList());
-        tempAttributes.add(attributes.where((element2) =>
-            tempIngredientAttributes[j].where((element) => element["AttributeID"] == element2["ID"]).isNotEmpty).toList());
+        tempAttributes.add(attributes
+            .where((element2) => tempIngredientAttributes[j]
+                .where((element) => element["AttributeID"] == element2["ID"])
+                .isNotEmpty)
+            .toList());
+      }
+      output.add(Meal(
+          ID: meals[i]["Meal"]["ID"],
+          Name: meals[i]["Meal"]["Name"],
+          Ingredients: List.generate(
+              tempMealIngredients.length,
+              (j) => Ingredient(
+                  ID: tempIngredients[j]["ID"],
+                  Name: tempIngredients[j]["Name"],
+                  CookingMethod: tempIngredients[j]["CookingMethod"],
+                  Attributes: List.generate(
+                      tempIngredientAttributes[j].length,
+                      (k) => Attribute(
+                          ID: tempAttributes[j][k]["ID"],
+                          CanBeWanted: tempAttributes[j][k]["CanBeWanted"],
+                          Name: tempAttributes[j][k]["Name"],
+                          PluralDisplayText: tempAttributes[j][k]
+                              ["PluralDisplayText"],
+                          SingularDisplayText: tempAttributes[j][k]
+                              ["SingularDisplayText"]))))));
+    }
+    return output;
+  }
+
+  static Future<List<Meal>> getNewForUser(String UserID) async {
+    // get 30 random meals that are not added by the user using the same methods as getAll and getAllForUser
+        var userMeals = await Supabase.instance.client
+        .from("UserMeal")
+        .select()
+        .eq("UserID", UserID);
+    var mealIngredients =
+        await Supabase.instance.client.from("MealIngredient").select();
+    var ingredients =
+        await Supabase.instance.client.from("Ingredient").select();
+    var ingredientAttributes =
+        await Supabase.instance.client.from("AttributeOfIngredient").select();
+    var attributes =
+        await Supabase.instance.client.from("IngredientAttribute").select();
+    List<Meal> output = List.empty(growable: true);
+    var possibleMeals = await Supabase.instance.client.from("Meal").select().limit(30);
+    for (int i = 0; i < possibleMeals.length; i++) {
+      if (!userMeals.any((element) => element["MealID"] == possibleMeals[i]["ID"])) {
+        var tempMealIngredients = mealIngredients
+            .where((element) => element["MealID"] == possibleMeals[i]["ID"])
+            .toList();
+        var tempIngredients = ingredients
+            .where((element2) => tempMealIngredients
+                .any((element) => element["IngredientID"] == element2["ID"]))
+            .toList();
+        List<List<Map<String, dynamic>>> tempIngredientAttributes =
+            List.empty(growable: true);
+        List<List<Map<String, dynamic>>> tempAttributes =
+            List.empty(growable: true);
+        for (int j = 0; j < tempIngredients.length; j++) {
+          tempIngredientAttributes.add(ingredientAttributes
+              .where((element2) =>
+                  element2["IngredientID"] == tempIngredients[j]["ID"])
+              .toList());
+          tempAttributes.add(attributes
+              .where((element2) => tempIngredientAttributes[j]
+                  .where((element) => element["AttributeID"] == element2["ID"])
+                  .isNotEmpty)
+              .toList());
+        }
+        output.add(Meal(
+            ID: possibleMeals[i]["ID"],
+            Name: possibleMeals[i]["Name"],
+            Ingredients: List.generate(
+                tempMealIngredients.length,
+                (j) => Ingredient(
+                    ID: tempIngredients[j]["ID"],
+                    Name: tempIngredients[j]["Name"],
+                    CookingMethod: tempIngredients[j]["CookingMethod"],
+                    Attributes: List.generate(
+                        tempIngredientAttributes[j].length,
+                        (k) => Attribute(
+                            ID: tempAttributes[j][k]["ID"],
+                            CanBeWanted: tempAttributes[j][k]["CanBeWanted"],
+                            Name: tempAttributes[j][k]["Name"],
+                            PluralDisplayText: tempAttributes[j][k]
+                                ["PluralDisplayText"],
+                            SingularDisplayText: tempAttributes[j][k]
+                                ["SingularDisplayText"]))))));
+      }
+    }
+    return output;
+  }
+
+  static Future<List<Meal>> getAllForUser(String UserID) async {
+    var userMeals = await Supabase.instance.client
+        .from("UserMeal")
+        .select()
+        .eq("UserID", UserID);
+    var meals = await Supabase.instance.client.from("UserMeal").select("Meal(*)");
+    var mealIngredients =
+        await Supabase.instance.client.from("MealIngredient").select();
+    var ingredients =
+        await Supabase.instance.client.from("Ingredient").select();
+    var ingredientAttributes =
+        await Supabase.instance.client.from("AttributeOfIngredient").select();
+    var attributes =
+        await Supabase.instance.client.from("IngredientAttribute").select();
+    List<Meal> output = List.empty(growable: true);
+    for (int i = 0; i < userMeals.length; i++) {
+      var tempMealIngredients = mealIngredients
+          .where((element) => element["MealID"] == userMeals[i]["MealID"])
+          .toList();
+      var tempIngredients = ingredients
+          .where((element2) => tempMealIngredients
+              .any((element) => element["IngredientID"] == element2["ID"]))
+          .toList();
+      List<List<Map<String, dynamic>>> tempIngredientAttributes =
+          List.empty(growable: true);
+      List<List<Map<String, dynamic>>> tempAttributes =
+          List.empty(growable: true);
+
+      for (int j = 0; j < tempIngredients.length; j++) {
+        tempIngredientAttributes.add(ingredientAttributes
+            .where((element2) =>
+                element2["IngredientID"] == tempIngredients[j]["ID"])
+            .toList());
+        tempAttributes.add(attributes
+            .where((element2) => tempIngredientAttributes[j]
+                .where((element) => element["AttributeID"] == element2["ID"])
+                .isNotEmpty)
+            .toList());
       }
       output.add(Meal(
           ID: meals[i]["Meal"]["ID"],
@@ -219,11 +353,12 @@ class Meal {
       }
     }
     meals.sort((a, b) => b.rating.compareTo(a.rating));
-    var outputMeals = meals.where((element) => element.rating == meals.first.rating).toList();
+    var outputMeals =
+        meals.where((element) => element.rating == meals.first.rating).toList();
     print(3);
 
     for (var i in meals) {
-      print(i.meal.Name + ": " + i.rating.toString());
+      print("${i.meal.Name}: ${i.rating}");
     }
     var outputMeal = outputMeals[Random().nextInt(outputMeals.length)];
     if (Supabase.instance.client.auth.currentUser!.id !=
@@ -240,15 +375,18 @@ class Meal {
   Widget MealIcon(BuildContext context) {
     return SizedBox(
       width: 200,
+      height: 200,
       child: GestureDetector(
         onTap: () => Navigator.push(context,
             MaterialPageRoute(builder: (context) => MealDetails(meal: this))),
         child: Card.filled(
-            color: Colors.blue,
+            color: Colors.white,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                  Text(Name),
-                  Icon(Icons.fastfood, size: 100),
+                Text(Name),
+                const Icon(Icons.fastfood, size: 100),
               ],
             )),
       ),

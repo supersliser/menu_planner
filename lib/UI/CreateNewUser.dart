@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:menu_planner/UI/Home.dart';
 import 'package:menu_planner/UI/TodaysMeal.dart';
 import 'package:menu_planner/User.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -21,54 +22,104 @@ class _CreateNewUserState extends State<CreateNewUser> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-          child: SizedBox(
-        width: 300,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Text("Create New User or Sign In"),
-            TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                    labelText: "Username",
-                    errorText: usernameError ? "Invalid Username" : null)),
-            TextField(
-                controller: emailController,
-                decoration: InputDecoration(
-                    labelText: "Email",
-                    errorText: emailError ? "Invalid Email" : null)),
-            TextField(
-                controller: passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                    labelText: "Password",
-                    errorText: passwordError ? "Invalid Password" : null)),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                  onPressed: submit, child: const Text("Create User")),
+    return DefaultTabController(
+        length: 2,
+        child: Scaffold(
+            appBar: TabBar(
+              tabs: [
+                Tab(text: "Create New User"),
+                Tab(text: "Sign In"),
+              ],
             ),
-                        Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                  onPressed: login, child: const Text("Sign In")),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                  onPressed: submitAnon, child: const Text("Anonymous Sign In")),
-            ),
-          ],
-        ),
-      )),
-    );
+            body: TabBarView(
+              children: [
+                Center(
+                    child: SizedBox(
+                  width: 300,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text("Create New User"),
+                      TextField(
+                          controller: nameController,
+                          onSubmitted: (_) => submit(),
+                          decoration: InputDecoration(
+                              labelText: "Username",
+                              errorText:
+                                  usernameError ? "Invalid Username" : null)),
+                      TextField(
+                          controller: emailController,
+                          onSubmitted: (_) => submit(),
+                          decoration: InputDecoration(
+                              labelText: "Email",
+                              errorText: emailError ? "Invalid Email" : null)),
+                      TextField(
+                          controller: passwordController,
+                          onSubmitted: (_) => submit(),
+                          obscureText: true,
+                          decoration: InputDecoration(
+                              labelText: "Password",
+                              errorText:
+                                  passwordError ? "Invalid Password" : null)),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                            onPressed: submit,
+                            child: const Text("Create User")),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                            onPressed: submitAnon,
+                            child: const Text("Anonymous Sign In")),
+                      ),
+                    ],
+                  ),
+                )),
+                Center(
+                    child: SizedBox(
+                  width: 300,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text("Sign In"),
+                      TextField(
+                          controller: emailController,
+                          onSubmitted: (_) => login(),
+                          decoration: InputDecoration(
+                              labelText: "Email",
+                              errorText: emailError ? "Invalid Email" : null)),
+                      TextField(
+                          controller: passwordController,
+                          obscureText: true,
+                          onSubmitted: (_) => login(),
+                          decoration: InputDecoration(
+                              labelText: "Password",
+                              errorText:
+                                  passwordError ? "Invalid Password" : null)),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                            onPressed: login, child: const Text("Sign In")),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                            onPressed: submitAnon,
+                            child: const Text("Anonymous Sign In")),
+                      ),
+                    ],
+                  ),
+                )),
+              ],
+            )));
   }
 
   Future<void> submitAnon() async {
-    await Supabase.instance.client.auth.signInWithPassword(password: "anonpassword", email: "anon@gmail.com");
+    await Supabase.instance.client.auth
+        .signInWithPassword(password: "anonpassword", email: "anon@gmail.com");
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => TodaysMeal()));
   }
@@ -87,10 +138,19 @@ class _CreateNewUserState extends State<CreateNewUser> {
       return;
     }
 
+try {
+    await Supabase.instance.client.auth.signInWithPassword(
+        password: passwordController.text, email: emailController.text);
+}catch (e) {
+  setState(() {
+    emailError = true;
+    passwordError = true;
+  });
+  return;
+}
 
-    await Supabase.instance.client.auth.signInWithPassword(password: passwordController.text, email: emailController.text);
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => TodaysMeal()));
+        context, MaterialPageRoute(builder: (context) => Home()));
   }
 
   Future<void> submit() async {
@@ -118,6 +178,6 @@ class _CreateNewUserState extends State<CreateNewUser> {
         Attributes: await AttributeWant.getDefault());
     await temp.pushToDatabase(emailController.text, passwordController.text);
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => TodaysMeal()));
+        context, MaterialPageRoute(builder: (context) => Home()));
   }
 }

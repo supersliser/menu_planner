@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:menu_planner/UI/Home.dart';
 import 'package:menu_planner/UI/TodaysMeal.dart';
 import 'package:menu_planner/User.dart';
@@ -19,6 +20,24 @@ class _CreateNewUserState extends State<CreateNewUser> {
   bool usernameError = false;
   bool emailError = false;
   bool passwordError = false;
+
+  Padding GoogleSignInButton() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ElevatedButton(
+          onPressed: () async {
+            var token = await GoogleSignIn().signIn();
+
+            if (token != null) {
+              await Supabase.instance.client.auth
+                  .signInWithOAuth(OAuthProvider.google);
+            }
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => Home()));
+          },
+          child: const Text("Sign up with Google")),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +81,7 @@ class _CreateNewUserState extends State<CreateNewUser> {
                               labelText: "Password",
                               errorText:
                                   passwordError ? "Invalid Password" : null)),
+                      GoogleSignInButton(),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
@@ -99,6 +119,7 @@ class _CreateNewUserState extends State<CreateNewUser> {
                               labelText: "Password",
                               errorText:
                                   passwordError ? "Invalid Password" : null)),
+                      GoogleSignInButton(),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
@@ -120,8 +141,7 @@ class _CreateNewUserState extends State<CreateNewUser> {
   Future<void> submitAnon() async {
     await Supabase.instance.client.auth
         .signInWithPassword(password: "anonpassword", email: "anon@gmail.com");
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => TodaysMeal()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
   }
 
   Future<void> login() async {
@@ -138,19 +158,18 @@ class _CreateNewUserState extends State<CreateNewUser> {
       return;
     }
 
-try {
-    await Supabase.instance.client.auth.signInWithPassword(
-        password: passwordController.text, email: emailController.text);
-}catch (e) {
-  setState(() {
-    emailError = true;
-    passwordError = true;
-  });
-  return;
-}
+    try {
+      await Supabase.instance.client.auth.signInWithPassword(
+          password: passwordController.text, email: emailController.text);
+    } catch (e) {
+      setState(() {
+        emailError = true;
+        passwordError = true;
+      });
+      return;
+    }
 
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => Home()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
   }
 
   Future<void> submit() async {
@@ -177,7 +196,6 @@ try {
         Name: nameController.text,
         Attributes: await AttributeWant.getDefault());
     await temp.pushToDatabase(emailController.text, passwordController.text);
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => Home()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
   }
 }

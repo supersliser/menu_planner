@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:menu_planner/UI/CreateNewMeal.dart';
 import 'package:menu_planner/UI/MealsList.dart';
 import 'package:menu_planner/UI/Navbar.dart';
+import 'package:menu_planner/UI/ProfilePage.dart';
 import 'package:menu_planner/UI/TodaysMeal.dart';
 
 class Home extends StatelessWidget {
@@ -56,6 +57,7 @@ class Home extends StatelessWidget {
     items.add(item(context, "Today's meal", Icons.fastfood, TodaysMeal()));
     items.add(item(context, "Create new meal", Icons.add, const CreateNewMeal()));
     items.add(item(context, "Add a meal to your list", Icons.list, const MealsList()));
+    items.add(item(context, "Profile", Icons.account_circle, const ProfilePage()));
     return Scaffold(
       appBar: AppBar(title: const Text("Home")),
       bottomNavigationBar: const Navbar(currentPageIndex: 0),

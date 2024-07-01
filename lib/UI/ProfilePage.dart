@@ -4,7 +4,7 @@ import 'package:menu_planner/User.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage({Key? key});
+  const ProfilePage({super.key});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -31,7 +31,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text("Profile"),
+                      const Text("Profile"),
                       Card.filled(
                         color: Theme.of(context).colorScheme.secondaryContainer,
                         child: FutureBuilder(
@@ -119,8 +119,8 @@ class _ProfilePageState extends State<ProfilePage> {
         width: saving? 120 : 80,
         child: ElevatedButton(
           child: Row(children: [
-            Text("Save"),
-            saving ? const CircularProgressIndicator() : Padding(padding: EdgeInsets.all(0),)
+            const Text("Save"),
+            saving ? const CircularProgressIndicator() : const Padding(padding: EdgeInsets.all(0),)
           ]),
           onPressed: () async {
             setState(() {

@@ -36,7 +36,7 @@ class Navbar extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => const CreateNewMeal()));
             break;
           case 3: Navigator.push(context, MaterialPageRoute(builder: (context) => const MealsList()));
-          case 4: Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
+          case 4: Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()));
         }
       },
     );

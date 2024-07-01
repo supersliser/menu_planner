@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:menu_planner/UI/Navbar.dart';
+import 'package:menu_planner/User.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -20,85 +21,121 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
         appBar: AppBar(title: const Text("Profile")),
         bottomNavigationBar: const Navbar(currentPageIndex: 4),
-        body: SizedBox(
-            width: 400,
-            child: Card.filled(
-              color: Theme.of(context).colorScheme.tertiaryContainer,
-              child: Column(
-                children: [
-                  Text("Profile"),
-                  Card.filled(
-                    color: Theme.of(context).colorScheme.secondaryContainer,
-                    child: TextField(
-                      autocorrect: false,
-                      controller: usernameController,
-                      decoration: const InputDecoration(labelText: "Username"),
-                    ),
+        body: Center(
+          child: SizedBox(
+              width: 400,
+              child: Card.filled(
+                color: Theme.of(context).colorScheme.tertiaryContainer,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text("Profile"),
+                      Card.filled(
+                        color: Theme.of(context).colorScheme.secondaryContainer,
+                        child: FutureBuilder(
+                          future: UserData.getByID(Supabase.instance.client.auth.currentUser!.id),
+                          builder: (context, snapshot) {
+                            usernameController.text = snapshot.data?.Name ?? "";
+                            return Column(
+                              children: [
+                                TextField(
+                                  autocorrect: false,
+                                  controller: usernameController,
+                                  decoration: const InputDecoration(labelText: "Username"),
+                                ),
+                              ],
+                            );
+                          }
+                        ),
+                      ),
+                      Card.filled(
+                        color: Theme.of(context).colorScheme.secondaryContainer,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                            children: [SaveButton(), SignOutButton(), ChangePasswordButton(), DeleteAccountButton()],
+                          ),
+                        ),
+                      )
+                    ],
                   ),
-                  Card.filled(
-                    color: Theme.of(context).colorScheme.secondaryContainer,
-                    child: Wrap(
-                      children: [SaveButton(), SignOutButton(), ChangePasswordButton(), DeleteAccountButton()],
-                    ),
-                  )
-                ],
-              ),
-            )));
+                ),
+              )),
+        ));
   }
 
-  ElevatedButton DeleteAccountButton() {
-    return ElevatedButton(
-      child: const Text("Delete Account"),
-      onPressed: () async {
-        await Supabase.instance.client.from("Users").delete().eq("UUID", Supabase.instance.client.auth.currentUser!.id);
-        await Supabase.instance.client.auth.admin.deleteUser(Supabase.instance.client.auth.currentUser!.id);
-        Navigator.pop(context);
-      },
+  Padding DeleteAccountButton() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ElevatedButton(
+        child: const Text("Delete Account"),
+        onPressed: () async {
+          await Supabase.instance.client.from("Users").delete().eq("UUID", Supabase.instance.client.auth.currentUser!.id);
+          await Supabase.instance.client.auth.admin.deleteUser(Supabase.instance.client.auth.currentUser!.id);
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 
-  ElevatedButton SignOutButton() {
-    return ElevatedButton(
-      child: const Text("Sign Out"),
-      onPressed: () async {
-        await Supabase.instance.client.auth.signOut();
-      },
+  Padding SignOutButton() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ElevatedButton(
+        child: const Text("Sign Out"),
+        onPressed: () async {
+          await Supabase.instance.client.auth.signOut();
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 
-  Column ChangePasswordButton() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        ElevatedButton(
-          child: const Text("Change Password"),
+  Padding ChangePasswordButton() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          ElevatedButton(
+            child: const Text("Change Password"),
+            onPressed: () async {
+              await Supabase.instance.client.auth.resetPasswordForEmail(Supabase.instance.client.auth.currentUser!.email!);
+            },
+          ),
+          passwordChange ? const Text("You should have just recieved an email which will change your password") : Container()
+        ],
+      ),
+    );
+  }
+
+  Padding SaveButton() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        width: saving? 120 : 80,
+        child: ElevatedButton(
+          child: Row(children: [
+            Text("Save"),
+            saving ? const CircularProgressIndicator() : Padding(padding: EdgeInsets.all(0),)
+          ]),
           onPressed: () async {
-            await Supabase.instance.client.auth.resetPasswordForEmail(Supabase.instance.client.auth.currentUser!.email!);
+            setState(() {
+              saving = true;
+            });
+            await Supabase.instance.client
+                .from("Users")
+                .update({"Username": usernameController.text}).eq(
+                    "UUID", Supabase.instance.client.auth.currentUser!.id);
+            setState(() {
+              saving = false;
+            });
           },
         ),
-        passwordChange ? const Text("You should have just recieved an email which will change your password") : Container()
-      ],
-    );
-  }
-
-  ElevatedButton SaveButton() {
-    return ElevatedButton(
-      child: Row(children: [
-        Text("Save"),
-        saving ? const CircularProgressIndicator() : Container()
-      ]),
-      onPressed: () async {
-        setState(() {
-          saving = true;
-        });
-        await Supabase.instance.client
-            .from("Users")
-            .update({"Username": usernameController.text}).eq(
-                "UUID", Supabase.instance.client.auth.currentUser!.id);
-        setState(() {
-          saving = false;
-        });
-      },
+      ),
     );
   }
 }

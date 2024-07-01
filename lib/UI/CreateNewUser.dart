@@ -26,14 +26,12 @@ class _CreateNewUserState extends State<CreateNewUser> {
       padding: const EdgeInsets.all(8.0),
       child: ElevatedButton(
           onPressed: () async {
-            var token = await GoogleSignIn().signIn();
-
-            if (token != null) {
+            
               await Supabase.instance.client.auth
-                  .signInWithOAuth(OAuthProvider.google);
-            }
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => Home()));
+                  .signInWithOAuth(OAuthProvider.google, redirectTo: "my-scheme://my-host/Home");
+            
+            // Navigator.push(
+            //     context, MaterialPageRoute(builder: (context) => Home()));
           },
           child: const Text("Sign up with Google")),
     );

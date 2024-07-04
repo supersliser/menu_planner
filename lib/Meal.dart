@@ -73,8 +73,8 @@ class Meal {
             .toList());
       }
       output.add(Meal(
-          ID: meals[i]["ID"],
-          Name: meals[i]["Name"],
+          ID: meals[i]["Meal"]["ID"],
+          Name: meals[i]["Meal"]["Name"],
           Ingredients: List.generate(
               tempMealIngredients.length,
               (j) => Ingredient(

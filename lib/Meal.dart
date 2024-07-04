@@ -319,7 +319,7 @@ class Meal {
           ingredient.Attributes.sort((a, b) => a.Name.compareTo(b.Name));
           if (Attribute.attributeListContains(
               ingredient.Attributes, attribute.attribute)) {
-            attribute.amountInWeek += 1;
+            attribute.amountHad += 1;
           }
         }
       }
@@ -343,10 +343,10 @@ class Meal {
           int att =
               Attribute.findAttributeWants(attributeWants, ingredientAttribute);
           if (att != -1) {
-            if (attributeWants[att].amountInWeek < attributeWants[att].amount) {
+            if (attributeWants[att].amountHad < attributeWants[att].amountWanted) {
               meal.rating += 5;
             } else {
-              meal.rating -= attributeWants[att].tooMuchIsBad ? 5 : 0;
+              meal.rating -= attributeWants[att].tooMuchIsBad ? 5 : -5;
             }
           }
         }

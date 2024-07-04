@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:menu_planner/UI/CreateNewMeal.dart';
+import 'package:menu_planner/UI/EditAttributeWants.dart';
 import 'package:menu_planner/UI/MealsList.dart';
 import 'package:menu_planner/UI/ProfilePage.dart';
 import 'package:menu_planner/UI/TodaysMeal.dart';
@@ -19,6 +20,7 @@ class Navbar extends StatelessWidget {
         NavigationDestination(icon: Icon(Icons.add), label: "Create new meal"),
         NavigationDestination(
             icon: Icon(Icons.list), label: "Add a meal to your list"),
+            NavigationDestination(icon: Icon(Icons.list_alt), label: "Amount of attributes per week"),
             NavigationDestination(icon: Icon(Icons.account_circle), label: "Profile"),
       ],
       selectedIndex: currentPageIndex,
@@ -36,7 +38,8 @@ class Navbar extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => const CreateNewMeal()));
             break;
           case 3: Navigator.push(context, MaterialPageRoute(builder: (context) => const MealsList()));
-          case 4: Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()));
+          case 4: Navigator.push(context, MaterialPageRoute(builder: (context) => const EditAttributeWants()));
+          case 5: Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()));
         }
       },
     );

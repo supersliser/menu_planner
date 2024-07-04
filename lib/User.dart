@@ -5,14 +5,14 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class AttributeWant {
   AttributeWant(
       {required this.attribute,
-      required this.amount,
+      required this.amountWanted,
       required this.tooMuchIsBad,
-      this.amountInWeek = 0});
+      this.amountHad = 0});
 
   final Attribute attribute;
-  final int amount;
+  final int amountWanted;
   final bool tooMuchIsBad;
-  int amountInWeek;
+  int amountHad;
 
   static Future<List<AttributeWant>> getForUser(String userID) async {
     List<AttributeWant> output = List.empty(growable: true);
@@ -25,7 +25,7 @@ class AttributeWant {
     for (var i in temp) {
       output.add(AttributeWant(
           attribute: await Attribute.getByID(i["AttributeID"]),
-          amount: i["AmountPerWeek"],
+          amountWanted: i["AmountPerWeek"],
           tooMuchIsBad: i["DontHaveTooMuch"]));
     }
 
@@ -34,35 +34,21 @@ class AttributeWant {
 
   static Future<List<AttributeWant>> getDefault() async {
     List<AttributeWant> output = List.empty(growable: true);
-
-    output.add(AttributeWant(
-        attribute: await Attribute.getByName("Vegetable"),
-        amount: 5,
-        tooMuchIsBad: false));
-    output.add(AttributeWant(
-        attribute: await Attribute.getByName("Starch"),
-        amount: 4,
-        tooMuchIsBad: false));
-    output.add(AttributeWant(
-        attribute: await Attribute.getByName("Dairy"),
-        amount: 2,
-        tooMuchIsBad: true));
-    output.add(AttributeWant(
-        attribute: await Attribute.getByName("Grain"),
-        amount: 2,
-        tooMuchIsBad: false));
-    output.add(AttributeWant(
-        attribute: await Attribute.getByName("RedMeat"),
-        amount: 2,
-        tooMuchIsBad: true));
-    output.add(AttributeWant(
-        attribute: await Attribute.getByName("Fish"),
-        amount: 2,
-        tooMuchIsBad: true));
-    output.add(AttributeWant(
-        attribute: await Attribute.getByName("WhiteMeat"),
-        amount: 2,
-        tooMuchIsBad: true));
+    var temp = await Supabase.instance.client
+        .from("IngredientAttribute")
+        .select()
+        .eq("CanBeWanted", true);
+    for (var i in temp) {
+      output.add(AttributeWant(
+          attribute: Attribute(
+              ID: i["ID"],
+              Name: i["Name"],
+              CanBeWanted: true,
+              SingularDisplayText: i["SingularDisplayText"],
+              PluralDisplayText: i["PluralDisplayText"]),
+          amountWanted: i["DefaultWantedValues"],
+          tooMuchIsBad: i["DefaultDontHaveTooMuch"]));
+    }
     return output;
   }
 }
@@ -97,13 +83,12 @@ class UserData {
     ID = Supabase.instance.client.auth.currentUser!.id;
     await Supabase.instance.client
         .from("Users")
-        .insert({"UUID": ID, "Username": Name});
-
+        .insert({"UUID": ID, "Username": Name, "WantsRoastOnSunday": false});
     for (var i in Attributes) {
       await Supabase.instance.client.from("UserAttributeWants").insert({
         "UserID": ID,
         "AttributeID": i.attribute.ID,
-        "AmountPerWeek": i.amount,
+        "AmountPerWeek": i.amountWanted,
         "DontHaveTooMuch": i.tooMuchIsBad
       });
     }

@@ -73,6 +73,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
+  counter_slider:
+    dependency: "direct main"
+    description:
+      name: counter_slider
+      sha256: a3f02e0bad1107e4bf38d341642ff62fae83ec1625d74b292fd6aaf0c41b0f0e
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   crypto:
     dependency: transitive
     description:

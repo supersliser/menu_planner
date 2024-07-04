@@ -38,6 +38,8 @@ dependencies:
 
   supabase_flutter: any
   google_sign_in: ^6.2.1
+  app_links: ^6.1.3
+  counter_slider: ^0.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

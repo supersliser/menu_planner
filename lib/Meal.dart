@@ -32,7 +32,7 @@ class Meal {
   static Future<List<Meal>> getAll() async {
     print("starting");
     var meals = Supabase.instance.client.auth.currentUser!.id ==
-            "7b25f28b-884c-42eb-817c-44ceefda061f"
+            "ef42fb45-b0f9-4759-9db8-946ff14e697c"
         ? await Supabase.instance.client.from("Meal").select()
         : await Supabase.instance.client
             .from("UserMeal")
@@ -48,9 +48,9 @@ class Meal {
         await Supabase.instance.client.from("IngredientAttribute").select();
     List<Meal> output = List.empty(growable: true);
     for (int i = 0; i < meals.length; i++) {
-      print("setting up meal ${meals[i]["Meal"]["Name"]}");
+      print("setting up meal ${meals[i]["Name"]}");
       var tempMealIngredients = mealIngredients
-          .where((element) => element["MealID"] == meals[i]["Meal"]["ID"])
+          .where((element) => element["MealID"] == meals[i]["ID"])
           .toList();
       var tempIngredients = ingredients
           .where((element2) => tempMealIngredients
@@ -73,8 +73,8 @@ class Meal {
             .toList());
       }
       output.add(Meal(
-          ID: meals[i]["Meal"]["ID"],
-          Name: meals[i]["Meal"]["Name"],
+          ID: meals[i]["ID"],
+          Name: meals[i]["Name"],
           Ingredients: List.generate(
               tempMealIngredients.length,
               (j) => Ingredient(
@@ -97,7 +97,7 @@ class Meal {
 
   static Future<List<Meal>> getNewForUser(String UserID) async {
     // get 30 random meals that are not added by the user using the same methods as getAll and getAllForUser
-        var userMeals = await Supabase.instance.client
+    var userMeals = await Supabase.instance.client
         .from("UserMeal")
         .select()
         .eq("UserID", UserID);
@@ -110,9 +110,11 @@ class Meal {
     var attributes =
         await Supabase.instance.client.from("IngredientAttribute").select();
     List<Meal> output = List.empty(growable: true);
-    var possibleMeals = await Supabase.instance.client.from("Meal").select().limit(30);
+    var possibleMeals =
+        await Supabase.instance.client.from("Meal").select().limit(30);
     for (int i = 0; i < possibleMeals.length; i++) {
-      if (!userMeals.any((element) => element["MealID"] == possibleMeals[i]["ID"])) {
+      if (!userMeals
+          .any((element) => element["MealID"] == possibleMeals[i]["ID"])) {
         var tempMealIngredients = mealIngredients
             .where((element) => element["MealID"] == possibleMeals[i]["ID"])
             .toList();
@@ -164,7 +166,8 @@ class Meal {
         .from("UserMeal")
         .select()
         .eq("UserID", UserID);
-    var meals = await Supabase.instance.client.from("UserMeal").select("Meal(*)");
+    var meals =
+        await Supabase.instance.client.from("UserMeal").select("Meal(*)");
     var mealIngredients =
         await Supabase.instance.client.from("MealIngredient").select();
     var ingredients =
@@ -319,7 +322,7 @@ class Meal {
           ingredient.Attributes.sort((a, b) => a.Name.compareTo(b.Name));
           if (Attribute.attributeListContains(
               ingredient.Attributes, attribute.attribute)) {
-            attribute.amountInWeek += 1;
+            attribute.amountHad += 1;
           }
         }
       }
@@ -330,23 +333,31 @@ class Meal {
         meal.rating -= subtractor;
         subtractor--;
       }
+
       for (var ingredient in meal.meal.Ingredients) {
         ingredient.Attributes.sort((a, b) => a.ID.compareTo(b.ID));
-        if (Attribute.intAttributeListContains(ingredient.Attributes, 10)) {
-          if (date.weekday != 7) {
-            meal.rating -= 50;
-          } else {
-            meal.rating += 50;
+        if ((await Supabase.instance.client
+                .from("Users")
+                .select()
+                .eq("UUID", Supabase.instance.client.auth.currentUser!.id))
+            .first["WantsRoastOnSunday"]) {
+          if (Attribute.intAttributeListContains(ingredient.Attributes, 10)) {
+            if (date.weekday != 7) {
+              meal.rating -= 50;
+            } else {
+              meal.rating += 50;
+            }
           }
         }
         for (var ingredientAttribute in ingredient.Attributes) {
           int att =
               Attribute.findAttributeWants(attributeWants, ingredientAttribute);
           if (att != -1) {
-            if (attributeWants[att].amountInWeek < attributeWants[att].amount) {
+            if (attributeWants[att].amountHad <
+                attributeWants[att].amountWanted) {
               meal.rating += 5;
             } else {
-              meal.rating -= attributeWants[att].tooMuchIsBad ? 5 : 0;
+              meal.rating -= attributeWants[att].tooMuchIsBad ? 5 : -5;
             }
           }
         }
@@ -362,7 +373,7 @@ class Meal {
     }
     var outputMeal = outputMeals[Random().nextInt(outputMeals.length)];
     if (Supabase.instance.client.auth.currentUser!.id !=
-        "7b25f28b-884c-42eb-817c-44ceefda061f") {
+        "ef42fb45-b0f9-4759-9db8-946ff14e697c") {
       await Supabase.instance.client.from("MealDate").insert({
         "Date": date.toString(),
         "User": Supabase.instance.client.auth.currentUser!.id,

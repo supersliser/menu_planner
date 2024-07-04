@@ -20,7 +20,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text("Profile")),
-        bottomNavigationBar: const Navbar(currentPageIndex: 4),
+        bottomNavigationBar: const Navbar(currentPageIndex: 5),
         body: Center(
           child: SizedBox(
               width: 400,

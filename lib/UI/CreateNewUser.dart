@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:menu_planner/UI/EditAttributeWants.dart';
 import 'package:menu_planner/UI/Home.dart';
+import 'package:menu_planner/UI/MealsList.dart';
 import 'package:menu_planner/User.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -149,21 +151,21 @@ class _CreateNewUserState extends State<CreateNewUser> {
                         const Text("Create New User"),
                         TextField(
                             controller: nameController,
-                            onSubmitted: (_) => submit(),
+                            onSubmitted: (_) => createUser(),
                             decoration: InputDecoration(
                                 labelText: "Username",
                                 errorText:
                                     usernameError ? "Invalid Username" : null)),
                         TextField(
                             controller: emailController,
-                            onSubmitted: (_) => submit(),
+                            onSubmitted: (_) => createUser(),
                             decoration: InputDecoration(
                                 labelText: "Email",
                                 errorText:
                                     emailError ? "Invalid Email" : null)),
                         TextField(
                             controller: passwordController,
-                            onSubmitted: (_) => submit(),
+                            onSubmitted: (_) => createUser(),
                             obscureText: true,
                             decoration: InputDecoration(
                                 labelText: "Password",
@@ -173,7 +175,7 @@ class _CreateNewUserState extends State<CreateNewUser> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ElevatedButton(
-                              onPressed: submit,
+                              onPressed: createUser,
                               child: const Text("Create User")),
                         ),
                         Padding(
@@ -264,7 +266,7 @@ class _CreateNewUserState extends State<CreateNewUser> {
         context, MaterialPageRoute(builder: (context) => const Home()));
   }
 
-  Future<void> submit() async {
+  Future<void> createUser() async {
     if (nameController.text == "") {
       setState(() {
         usernameError = true;
@@ -289,6 +291,18 @@ class _CreateNewUserState extends State<CreateNewUser> {
         Attributes: await AttributeWant.getDefault());
     await temp.pushToDatabase(emailController.text, passwordController.text);
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const Home()));
+        context, MaterialPageRoute(builder: (context) => const SetupAttributeWantsPage()));
+  }
+}
+
+class SetupAttributeWantsPage extends StatelessWidget {
+  const SetupAttributeWantsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(title: const Text("Amount of attributes per week")),
+        body: const EditAttributeWants(),
+        floatingActionButton: FloatingActionButton(child: Text("Done"), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const MealsList())),),);
   }
 }

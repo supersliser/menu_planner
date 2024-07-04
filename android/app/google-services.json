@@ -12,7 +12,8 @@
           "package_name": "com.supersliser.menu_planner"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBGl5VrY17Nwl_gLH-cnEFsPaJP9b1u4bg"

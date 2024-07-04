@@ -24,26 +24,35 @@ class _CreateNewUserState extends State<CreateNewUser> {
   bool emailError = false;
   bool passwordError = false;
 
-  Padding GoogleSignUpButton() {
+  Padding DiscordSignInButton() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ElevatedButton(
           onPressed: () async {
-            if (Platform.isAndroid || Platform.isIOS) {
-            } else {
-              Supabase.instance.client.auth.signInWithOAuth(
-                OAuthProvider.google,
-                redirectTo: 'supersliser.MenuPlanner://Home',
-              );
-
-              var temp = UserData(
-                  Name: nameController.text,
-                  Attributes: await AttributeWant.getDefault());
-              await temp.pushToDatabase(
-                  emailController.text, passwordController.text);
+            if (nameController.text == "") {
+              setState(() {
+                usernameError = true;
+              });
+              return;
             }
+            await Supabase.instance.client.auth.signInWithOAuth(
+              OAuthProvider.discord,
+              redirectTo: "superslisermenuplanner://SignInCallback",
+            );
+            // if (Supabase.instance.client.auth.currentUser == null) {
+            //   return;
+            // }
+            var temp = UserData(
+                Name: nameController.text,
+                Attributes: await AttributeWant.getDefault());
+
+            await temp.pushToDatabase(
+                emailController.text, passwordController.text);
+
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => const Home()));
           },
-          child: const Text("Sign up with Google")),
+          child: const Text("Sign in with Discord")),
     );
   }
 
@@ -52,6 +61,12 @@ class _CreateNewUserState extends State<CreateNewUser> {
       padding: const EdgeInsets.all(8.0),
       child: ElevatedButton(
           onPressed: () async {
+            if (nameController.text == "") {
+              setState(() {
+                usernameError = true;
+              });
+              return;
+            }
             if (Platform.isAndroid || Platform.isIOS) {
               /// TODO: update the Web client ID with your own.
               ///
@@ -65,9 +80,15 @@ class _CreateNewUserState extends State<CreateNewUser> {
               const androidClientId =
                   '552964403441-il9228059n20q0q4gk5r0rqkbapj1nnn.apps.googleusercontent.com';
 
+              const List<String> scopes = <String>[
+                'email',
+                'https://www.googleapis.com/auth/contacts.readonly',
+              ];
+
               final GoogleSignIn googleSignIn = GoogleSignIn(
                 clientId: androidClientId,
                 serverClientId: webClientId,
+                scopes: scopes,
               );
               final googleUser = await googleSignIn.signIn();
               if (googleUser == null) {
@@ -98,7 +119,7 @@ class _CreateNewUserState extends State<CreateNewUser> {
             } else {
               await Supabase.instance.client.auth.signInWithOAuth(
                 OAuthProvider.google,
-                redirectTo: 'com.supersliser.menu_planner://SignInCallback',
+                redirectTo: 'superslisermenuplanner://SignInCallback',
               );
             }
           },
@@ -150,7 +171,7 @@ class _CreateNewUserState extends State<CreateNewUser> {
                                 labelText: "Password",
                                 errorText:
                                     passwordError ? "Invalid Password" : null)),
-                        GoogleSignInButton(),
+                        // DiscordSignInButton(),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ElevatedButton(
@@ -189,7 +210,7 @@ class _CreateNewUserState extends State<CreateNewUser> {
                                 labelText: "Password",
                                 errorText:
                                     passwordError ? "Invalid Password" : null)),
-                        GoogleSignInButton(),
+                        // DiscordSignInButton(),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ElevatedButton(

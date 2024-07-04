@@ -35,20 +35,22 @@ class _ProfilePageState extends State<ProfilePage> {
                       Card.filled(
                         color: Theme.of(context).colorScheme.secondaryContainer,
                         child: FutureBuilder(
-                          future: UserData.getByID(Supabase.instance.client.auth.currentUser!.id),
-                          builder: (context, snapshot) {
-                            usernameController.text = snapshot.data?.Name ?? "";
-                            return Column(
-                              children: [
-                                TextField(
-                                  autocorrect: false,
-                                  controller: usernameController,
-                                  decoration: const InputDecoration(labelText: "Username"),
-                                ),
-                              ],
-                            );
-                          }
-                        ),
+                            future: UserData.getByID(
+                                Supabase.instance.client.auth.currentUser!.id),
+                            builder: (context, snapshot) {
+                              usernameController.text =
+                                  snapshot.data?.Name ?? "";
+                              return Column(
+                                children: [
+                                  TextField(
+                                    autocorrect: false,
+                                    controller: usernameController,
+                                    decoration: const InputDecoration(
+                                        labelText: "Username"),
+                                  ),
+                                ],
+                              );
+                            }),
                       ),
                       Card.filled(
                         color: Theme.of(context).colorScheme.secondaryContainer,
@@ -56,7 +58,12 @@ class _ProfilePageState extends State<ProfilePage> {
                           padding: const EdgeInsets.all(8.0),
                           child: Wrap(
                             alignment: WrapAlignment.center,
-                            children: [SaveButton(), SignOutButton(), ChangePasswordButton(), DeleteAccountButton()],
+                            children: [
+                              SaveButton(),
+                              SignOutButton(),
+                              ChangePasswordButton(),
+                              DeleteAccountButton()
+                            ],
                           ),
                         ),
                       )
@@ -73,9 +80,14 @@ class _ProfilePageState extends State<ProfilePage> {
       child: ElevatedButton(
         child: const Text("Delete Account"),
         onPressed: () async {
-          await Supabase.instance.client.from("Users").delete().eq("UUID", Supabase.instance.client.auth.currentUser!.id);
-          await Supabase.instance.client.auth.admin.deleteUser(Supabase.instance.client.auth.currentUser!.id);
+          await Supabase.instance.client
+              .from("Users")
+              .delete()
+              .eq("UUID", Supabase.instance.client.auth.currentUser!.id);
+          await Supabase.instance.client.auth.admin
+              .deleteUser(Supabase.instance.client.auth.currentUser!.id);
           Navigator.pop(context);
+          setState(() {});
         },
       ),
     );
@@ -89,6 +101,7 @@ class _ProfilePageState extends State<ProfilePage> {
         onPressed: () async {
           await Supabase.instance.client.auth.signOut();
           Navigator.pop(context);
+          setState(() {});
         },
       ),
     );
@@ -103,10 +116,14 @@ class _ProfilePageState extends State<ProfilePage> {
           ElevatedButton(
             child: const Text("Change Password"),
             onPressed: () async {
-              await Supabase.instance.client.auth.resetPasswordForEmail(Supabase.instance.client.auth.currentUser!.email!);
+              await Supabase.instance.client.auth.resetPasswordForEmail(
+                  Supabase.instance.client.auth.currentUser!.email!);
             },
           ),
-          passwordChange ? const Text("You should have just recieved an email which will change your password") : Container()
+          passwordChange
+              ? const Text(
+                  "You should have just recieved an email which will change your password")
+              : Container()
         ],
       ),
     );
@@ -116,11 +133,15 @@ class _ProfilePageState extends State<ProfilePage> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: SizedBox(
-        width: saving? 120 : 80,
+        width: saving ? 120 : 80,
         child: ElevatedButton(
           child: Row(children: [
             const Text("Save"),
-            saving ? const CircularProgressIndicator() : const Padding(padding: EdgeInsets.all(0),)
+            saving
+                ? const CircularProgressIndicator()
+                : const Padding(
+                    padding: EdgeInsets.all(0),
+                  )
           ]),
           onPressed: () async {
             setState(() {

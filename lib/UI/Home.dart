@@ -64,14 +64,25 @@ class Home extends StatelessWidget {
     items.add(item(context, "Add a meal to your list", Icons.list, const MealsList()));
     items.add(item(context, "Profile", Icons.account_circle, const ProfilePage()));
     items.add(item(context, "Amount of attributes per week", Icons.list_alt, EditAttributeWantsPage()));
-    return Scaffold(
-      appBar: AppBar(title: const Text("Home")),
-      bottomNavigationBar: const Navbar(currentPageIndex: 0),
-      body: SingleChildScrollView(
-        child: Center(
-          child: itemHolder(items),
-        ),
-      ),
+    return FutureBuilder(
+      future: Supabase.instance.client.auth.refreshSession(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Scaffold(body: const Center(child: CircularProgressIndicator()));
+        }
+        if (snapshot.data!.session == null) {
+          return CreateNewUser();
+        }
+        return Scaffold(
+          appBar: AppBar(title: const Text("Home")),
+          bottomNavigationBar: const Navbar(currentPageIndex: 0),
+          body: SingleChildScrollView(
+            child: Center(
+              child: itemHolder(items),
+            ),
+          ),
+        );
+      }
     );
   }
 }

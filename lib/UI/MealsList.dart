@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:menu_planner/Meal.dart';
+import 'package:menu_planner/UI/EditAttributeWants.dart';
+import 'package:menu_planner/UI/EditOptionalIngredients.dart';
 import 'package:menu_planner/UI/Navbar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -19,30 +21,50 @@ class _MealsListState extends State<MealsList> {
   Widget ListItem(Meal meal, bool isUserList) {
     return SizedBox(
         height: 50,
-        child: Card.outlined(
-          color: Theme.of(context).colorScheme.secondaryContainer,
-          child: Row(
-            children: [
-              Checkbox(
-                  value: isUserList,
-                  onChanged: (value) async {
-                    if (!value!) {
-                      await Supabase.instance.client
-                          .from("UserMeal")
-                          .delete()
-                          .eq("UserID",
-                              Supabase.instance.client.auth.currentUser!.id)
-                          .eq("MealID", meal.ID);
-                    } else {
-                      await Supabase.instance.client.from("UserMeal").insert({
-                        "UserID": Supabase.instance.client.auth.currentUser!.id,
-                        "MealID": meal.ID
-                      });
-                    }
-                    setState(() {});
-                  }),
-              Text(meal.Name)
-            ],
+        child: GestureDetector(
+          onTap: () async {
+            if (isUserList) {
+              await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          EditOptionalIngredientsPage(mealID: meal.ID)));
+            }
+          },
+          child: Card.outlined(
+            color: Theme.of(context).colorScheme.secondaryContainer,
+            child: Row(
+              children: [
+                Checkbox(
+                    value: isUserList,
+                    onChanged: (value) async {
+                      if (!value!) {
+                        await Supabase.instance.client
+                            .from("UserMeal")
+                            .delete()
+                            .eq("UserID",
+                                Supabase.instance.client.auth.currentUser!.id)
+                            .eq("MealID", meal.ID);
+                        setState(() {});
+                      } else {
+                        await Supabase.instance.client.from("UserMeal").insert({
+                          "UserID":
+                              Supabase.instance.client.auth.currentUser!.id,
+                          "MealID": meal.ID
+                        });
+                        setState(() {});
+                      }
+                        await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    EditOptionalIngredientsPage(
+                                        mealID: meal.ID)));
+                      
+                    }),
+                Text(meal.Name)
+              ],
+            ),
           ),
         ));
   }

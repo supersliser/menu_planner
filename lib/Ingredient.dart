@@ -2,7 +2,7 @@ import 'Attribute.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Ingredient {
-  Ingredient({required this.ID, required this.Name, required this.CookingMethod, required this.Attributes});
+  Ingredient({required this.ID, required this.Name, required this.CookingMethod, this.Attributes = const []});
 
   int ID;
   String Name;

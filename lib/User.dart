@@ -102,7 +102,7 @@ class UserData {
         .first);
   }
 
-  Future<Meal> getMealForDate(DateTime date) async {
+  Future<Meal?> getMealForDate(DateTime date) async {
     var temp = await Supabase.instance.client
         .from("MealDate")
         .select()
@@ -111,7 +111,7 @@ class UserData {
         .limit(1);
 
     if (temp.isEmpty) {
-      return await Meal.calculateBestMeal(date);
+      return await Meal.calculateBestMeal(date); 
     } else {
       return await Meal.getByID(temp.first["MealID"]);
     }

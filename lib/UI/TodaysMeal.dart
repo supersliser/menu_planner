@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:menu_planner/Meal.dart';
+import 'package:menu_planner/UI/MealsList.dart';
 import 'package:menu_planner/UI/Navbar.dart';
 import 'package:menu_planner/User.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -26,22 +27,28 @@ class _TodaysMealState extends State<TodaysMeal> {
             future: setup(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return const Center(
+                return Center(
                     child: Column(
                   children: [Text("Loading..."), CircularProgressIndicator()],
                 ));
               }
-              return dateCardItem(context, widget.date, snapshot.data!);
+              return snapshot.data!;
             }),
       ),
     );
   }
 
-  Future<Meal> setup() async {
+  Future<Widget> setup() async {
     widget.user =
         await UserData.getByID(Supabase.instance.client.auth.currentUser!.id);
-
-    return await widget.user.getMealForDate(widget.date);
+    var temp = await widget.user.getMealForDate(widget.date);
+    if (temp == null) {
+      return Center(
+          child: Column(
+        children: [Text("Make sure to add meals to your list"), ElevatedButton(onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MealsList())), child: Text("Meal List"))],
+      ));
+    }
+    return dateCardItem(context, widget.date, temp);
   }
 
   Widget dateCardItem(BuildContext context, DateTime date, Meal meal) {

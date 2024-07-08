@@ -38,6 +38,9 @@ class Meal {
             .from("UserMeal")
             .select("Meal(ID, Name)")
             .eq("UserID", Supabase.instance.client.auth.currentUser!.id);
+    if (meals.length == 0) {
+      return [];
+    }
     var mealIngredients =
         await Supabase.instance.client.from("MealIngredient").select();
     var ingredients =
@@ -162,12 +165,8 @@ class Meal {
   }
 
   static Future<List<Meal>> getAllForUser(String UserID) async {
-    var userMeals = await Supabase.instance.client
-        .from("UserMeal")
-        .select()
-        .eq("UserID", UserID);
     var meals =
-        await Supabase.instance.client.from("UserMeal").select("Meal(*)");
+        await Supabase.instance.client.from("UserMeal").select("Meal(*)").eq("UserID", UserID);
     var mealIngredients =
         await Supabase.instance.client.from("MealIngredient").select();
     var ingredients =
@@ -177,9 +176,9 @@ class Meal {
     var attributes =
         await Supabase.instance.client.from("IngredientAttribute").select();
     List<Meal> output = List.empty(growable: true);
-    for (int i = 0; i < userMeals.length; i++) {
+    for (int i = 0; i < meals.length; i++) {
       var tempMealIngredients = mealIngredients
-          .where((element) => element["MealID"] == userMeals[i]["MealID"])
+          .where((element) => element["MealID"] == meals[i]["Meal"]["MealID"])
           .toList();
       var tempIngredients = ingredients
           .where((element2) => tempMealIngredients
@@ -288,8 +287,11 @@ class Meal {
     return false;
   }
 
-  static Future<Meal> calculateBestMeal(DateTime date) async {
+  static Future<Meal?> calculateBestMeal(DateTime date) async {
     var tempmeals = await getAll();
+    if (tempmeals.isEmpty) {
+      return null;
+    }
 
     print(1);
     List<AttributeWant> attributeWants = await AttributeWant.getForUser(

@@ -31,9 +31,10 @@ class Meal {
 
   static Future<List<Meal>> getAll() async {
     print("starting");
-    var meals = Supabase.instance.client.auth.currentUser!.id ==
-            "ef42fb45-b0f9-4759-9db8-946ff14e697c"
-        ? await Supabase.instance.client.from("Meal").select()
+    bool anon = Supabase.instance.client.auth.currentUser!.id ==
+            "ef42fb45-b0f9-4759-9db8-946ff14e697c";
+    var meals = anon
+        ? await Supabase.instance.client.from("Meal").select().eq("Name", "Roast Chicken")
         : await Supabase.instance.client
             .from("UserMeal")
             .select("Meal(ID, Name)")
@@ -76,8 +77,8 @@ class Meal {
             .toList());
       }
       output.add(Meal(
-          ID: meals[i]["Meal"]["ID"],
-          Name: meals[i]["Meal"]["Name"],
+          ID: anon ? meals[i]["ID"] : meals[i]["Meal"]["ID"],
+          Name: anon ? meals[i]["Name"] : meals[i]["Meal"]["Name"],
           Ingredients: List.generate(
               tempMealIngredients.length,
               (j) => Ingredient(
